@@ -1,0 +1,74 @@
+import time
+from turtle import Screen,Turtle
+from snake import Snake
+from food import Food
+from scoreboard import ScoreBoard
+from gameover import GameOver
+
+FONT=("Courier", 24, "normal")
+ALIGNMENT="center"
+
+# Create the screen
+seg=Turtle()
+gameover=GameOver()
+screen = Screen()
+screen.setup(600, 600)
+screen.bgcolor('black')
+screen.title('Snake Game')
+screen.tracer(0)
+
+snake = Snake()
+food=Food()
+scoreboard=ScoreBoard()
+
+game_on = True
+
+screen.listen()
+screen.onkey(snake.up,'Up')
+screen.onkey(snake.down,'Down')
+screen.onkey(snake.left,'Left')
+screen.onkey(snake.right,'Right')
+
+
+while game_on:
+    screen.update()
+    time.sleep(0.1)
+    snake.move()
+
+    if snake.head.distance(food)<15:
+        food.refresh()
+        snake.extend()
+        scoreboard.increase_score()
+
+    if snake.head.xcor()>280 or snake.head.ycor()>280 or snake.head.xcor()<-280 or snake.head.ycor()<-280:
+        # gameover.game_over1()
+        # scoreboard.reset()
+        # gameover.reset_snake()
+        scoreboard.high_score()
+        snake.reset()
+        snake.move()
+        # game_on=False
+        # if game_on == False:
+        #     gameover.reset_snake()
+
+    for segment in snake.snake_segments[1:]:
+        if snake.head.distance(segment)<15:
+            # gameover.game_over1()
+            # gameover.reset_snake()
+            scoreboard.high_score()
+            snake.reset()
+            snake.move()
+            # scoreboard.reset()
+            # game_on = False
+            # if game_on == False:
+            #     gameover.reset_snake()
+
+
+    # Check for user input to exit the game (e.g., pressing the "q" key)
+    if screen.onkeypress(lambda: screen.bye(), "q"):
+        gameover.game_over1()
+        # gameover.reset_snake()
+        game_on = False
+
+# Close the screen on click
+screen.exitonclick()
